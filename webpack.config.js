@@ -9,8 +9,8 @@ var config = {
 	output: {
 	  path: BUILD_DIR,
 	  filename: 'bundle.js'
-        }
-	module : {
+	},
+	module: {
 	    loaders : [
 	      {
 		test : /\.jsx?/,
@@ -18,7 +18,7 @@ var config = {
 		loader : 'babel'
 	      }
 	    ]
-      }
+      }		
 };
 
 module.exports = config;
