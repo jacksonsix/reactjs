@@ -7,6 +7,16 @@ class Ts extends Component{
     return(<h3> Ts value is {this.props.value} </h3>);
   }
 }
+           
+function tick(){
+    const t = (<h3>Time is {new Date().toLocaleTimeString()} </h3>);
+    ReactDOM.render(
+    t,
+    document.getElementById('root')
+  );  
+}  
+  
+setInterval(tick,1000);  
 
 class App extends Component {
   render() {
