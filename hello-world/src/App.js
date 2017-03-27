@@ -1,6 +1,19 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import logo from './logo.svg';
 import './App.css';
+
+
+function tick(){
+    const t = (<h3>Time is {new Date().toLocaleTimeString()} </h3>);
+    ReactDOM.render(
+    t,
+    document.getElementById('da')
+  );  
+}  
+  
+setInterval(tick,1000); 
+
 
 class Ts extends Component{
   render(){
