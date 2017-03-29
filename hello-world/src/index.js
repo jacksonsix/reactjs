@@ -120,7 +120,7 @@ class Game extends React.Component {
 
 ReactDOM.render(
   <Game />,
-  document.getElementById('container')
+  document.getElementById('da')
 );
 
 function calculateWinner(squares) {
