@@ -1,0 +1,37 @@
+Webpack and Browserify do pretty much the same job, which is bundling your modules to be used in a browser environment (though you can target other environments, like bundling your server-side ES6 code for Node). For example the Node module is a feature, which doesn't exist in the browser, and ES 6 modules are not implemented in any browser yet, which is why things need to be bundled. However, they differ in many ways, Webpack offers many tools by default (e.g. code splitting), while Browserify can do this only after downloading plugins, but using both leads to very similar results. It comes down to personal preference (I am used to Webpack). Webpack is not a task runner, it is just processor of your files (it processes them by so called loaders) run directly from CLI or by a task runner.
+
+webpack-dev-server provides something like Browsersync - a server, where you can deploy your app and verify your FE developing progress immediately by dev-server automatically refreshing the browser or even propagating changes without it with hot deploy (e.g. React components).
+
+I've been using Gulp for its conciseness and easy task writing, but have later found out I need neither Gulp nor Grunt at all. Everything I have ever needed could have been done using npm scripts to run 3rd-party tools through their API. Choosing between Gulp, Grunt or npm scripts depends on your taste, JS experience and experience of developers working with you.
+
+While tasks in Gulp (or Grunt maybe) are easy to read even for people not so familiar with JS, it is yet another tool to require and learn, and I personally prefer to narrow my dependencies and make things simple. On the other hand, replacing these tasks with combination of npm scripts and run files (where configuration and execution function of tools like Webpack lies) is more challenging. But in the majority of cases, those three are equal in terms of results.
+
+As for the examples, I suggest you have a look at this React starter project, which shows you nice combination of npm scripts, Webpack and Browsersync. You can find those npm scripts in package.json in the root folder, in a property named scripts. There you will mostly encounter commands like babel-node tools/run start. Babel-node is a CLI tool (not ment for production use), which at first compiles ES6 file tools/run (run.js file located in tools) - basically a runner utility. This runner takes a function as an argument and runs it, which in this case is start - another utility (start.js) responsible for bundling source files (both client and server), starting node-express server and subsequently Browsersync, which serves as a proxy for propagating development changes to browser.
+
+Speaking more precisely, start.js imports Webpack config for client, manipulates it to add hot module replacement capabilities, then creates both client and server side bundles, starts node server through yet another utility named runServer.js and after successful start inits Browsersync, which looks something like this.
+
+const bs = Browsersync.create();  
+bs.init({
+      ...(DEBUG ? {} : { notify: false, ui: false }),
+
+      proxy: {
+        target: host,
+        middleware: [wpMiddleware, ...hotMiddlewares],
+      },
+
+      // no need to watch '*.js' here, webpack will take care of it for us,
+      // including full page reloads if HMR won't work
+      files: ['build/content/**/*.*'],
+}, resolve)
+The important part is proxy.target, where you set server address you want to proxy, which could be http://localhost:3000, and Browsersync starts a server listening on http://localhost:3001, where the same app is deployed, but with hot module replacement, so you can experience propagation of source file changes to browser immediately with or even without reloading. As you can see, there is another configuration property files with individual files or patterns Browsersync watches for changes and reloads browser, if some occur, but as the comment says, Webpack takes care of watching js sources by itself with HMR, so they cooperate there.
+
+Now I don't have any equivalent example of such Grunt or Gulp configuration, but with Gulp (and somewhat similarly with Grunt) you would write individual tasks in gulpfile.js like
+
+gulp.task('bundle', function() {
+  // bundling source files with some gulp plugins like gulp-webpack maybe
+});
+
+gulp.task('start', function() {
+  // starting server and stuff
+});
+where you would be doing essentially pretty much the same things as in the starter-kit, this time with task runner, which solves some problems for you, but presents its own issues and some difficulties during learning the usage, and as I say, the more dependencies you have, the more can go wrong. And that is the reason I like to get rid of such tools.
